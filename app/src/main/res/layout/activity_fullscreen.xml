@@ -15,7 +15,7 @@
         android:orientation="vertical"
         android:layout_margin="43dp"
         >
-        <TextureView
+        <com.example.lumen.texturedemo.MyTextureView
             android:id="@+id/textureView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

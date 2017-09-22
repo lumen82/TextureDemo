@@ -13,23 +13,15 @@ import android.view.TextureView;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.extractor.Extractor;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.SingleSampleMediaSource;
-import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
@@ -269,6 +261,7 @@ public class FullscreenActivity extends AppCompatActivity {
         public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
             Log.e(FullscreenActivity.class.getSimpleName(), "onVideoSizeChanged: width = " + width + " , height = " + height
                 + ", unappliedRotationDegress = " + unappliedRotationDegrees + ", pixelWidthHeightRatio = " + pixelWidthHeightRatio);
+            viewHolder.textureView.transformVideo(width, height);
         }
 
         @Override
@@ -290,7 +283,7 @@ public class FullscreenActivity extends AppCompatActivity {
 
     public class MyViewHolder{
         @BindView(R.id.textureView)
-        TextureView textureView;
+        MyTextureView textureView;
 
         @BindView(R.id.inpageContainer)
         LinearLayout inpageContainer;
