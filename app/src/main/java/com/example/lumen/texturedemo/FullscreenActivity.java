@@ -18,6 +18,7 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.LoopingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
@@ -143,6 +144,12 @@ public class FullscreenActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        player.release();
+    }
+
+    @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
@@ -213,46 +220,20 @@ public class FullscreenActivity extends AppCompatActivity {
         player = ExoPlayerFactory.newSimpleInstance(this, trackSelector);
         DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(this, Util.getUserAgent(this, "Multimedia"));
         ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
-        MediaSource videoSource = new ExtractorMediaSource(Uri.parse(url), dataSourceFactory, extractorsFactory, null,
+        MediaSource videoSource = new ExtractorMediaSource(Uri.parse(HttpProxyUtils.getServer().getProxyUrl(url)), dataSourceFactory, extractorsFactory, null,
                 new ExtractorMediaSource.EventListener() {
                     @Override
                     public void onLoadError(IOException e) {
                         Log.e(FullscreenActivity.class.getSimpleName(), "onLoadError: " + e.getMessage());
                     }
                 });
+
         player.setVideoTextureView(viewHolder.textureView);
 //        player.setRepeatMode(ExoPlayer.REPEAT_MODE_ONE);
         player.addVideoListener(new MyVideoListener());
-        player.prepare(videoSource);
+        player.prepare(new LoopingMediaSource(videoSource));
         player.setPlayWhenReady(true);
 
-    }
-
-    private class MySurfaceTextureListener implements TextureView.SurfaceTextureListener{
-
-        @Override
-        public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int i, int i1) {
-            Log.d(FullscreenActivity.class.getSimpleName(), "================== onSurfaceTextureAvailable =========================");
-
-        }
-
-        @Override
-        public void onSurfaceTextureSizeChanged(SurfaceTexture surfaceTexture, int i, int i1) {
-            Log.d(FullscreenActivity.class.getSimpleName(), "================== onSurfaceTextureSizeChanged =========================");
-
-        }
-
-        @Override
-        public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
-            Log.d(FullscreenActivity.class.getSimpleName(), "================== onSurfaceTextureDestroyed =========================");
-            return false;
-        }
-
-        @Override
-        public void onSurfaceTextureUpdated(SurfaceTexture surfaceTexture) {
-            Log.d(FullscreenActivity.class.getSimpleName(), "================== onSurfaceTextureUpdated =========================");
-
-        }
     }
 
     private class MyVideoListener implements SimpleExoPlayer.VideoListener{
