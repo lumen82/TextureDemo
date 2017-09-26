@@ -208,6 +208,7 @@ public class FullscreenActivity extends AppCompatActivity {
         viewHolder.textureView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                toggle();
                 toggleVideo();
             }
         });
@@ -229,9 +230,8 @@ public class FullscreenActivity extends AppCompatActivity {
                 });
 
         player.setVideoTextureView(viewHolder.textureView);
-//        player.setRepeatMode(ExoPlayer.REPEAT_MODE_ONE);
         player.addVideoListener(new MyVideoListener());
-        player.prepare(new LoopingMediaSource(videoSource));
+        player.prepare(new LoopingMediaSource(videoSource)); /* 部分视频无法循环，可通过 EventListner 手动循环 */
         player.setPlayWhenReady(true);
 
     }
@@ -242,7 +242,11 @@ public class FullscreenActivity extends AppCompatActivity {
         public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
             Log.e(FullscreenActivity.class.getSimpleName(), "onVideoSizeChanged: width = " + width + " , height = " + height
                 + ", unappliedRotationDegress = " + unappliedRotationDegrees + ", pixelWidthHeightRatio = " + pixelWidthHeightRatio);
-            viewHolder.textureView.transformVideo(width, height);
+            if (isInPage) {
+                viewHolder.textureView.transformVideo(MyTextureView.SCALE_TYPE_X, width, height);
+            } else {
+                viewHolder.textureView.transformVideo(MyTextureView.SCALE_TYPE_FIT_MAX, width, height);
+            }
         }
 
         @Override
@@ -253,13 +257,14 @@ public class FullscreenActivity extends AppCompatActivity {
 
     private void toggleVideo(){
         if (isInPage){
+            isInPage = !isInPage;
             viewHolder.inpageContainer.removeView(viewHolder.textureView);
             viewHolder.fullscreenContainer.addView(viewHolder.textureView);
         }else {
+            isInPage = !isInPage;
             viewHolder.fullscreenContainer.removeView(viewHolder.textureView);
             viewHolder.inpageContainer.addView(viewHolder.textureView);
         }
-        isInPage = !isInPage;
     }
 
     public class MyViewHolder{
