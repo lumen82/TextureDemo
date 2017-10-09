@@ -1,0 +1,4 @@
+* 说明
+  1. 自定义TextureView 实现视频适配与裁剪
+  2. 核心代码来自：
+     http://my.oschina.net/u/1403288/blog/634051
